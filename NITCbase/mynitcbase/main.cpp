@@ -8,17 +8,14 @@
 int main(int argc, char *argv[]) {
   Disk disk_run;
 
-  // create objects for the relation catalog and attribute catalog
+  // create objects for the relation catalog
   RecBuffer relCatBuffer(RELCAT_BLOCK);
-  RecBuffer attrCatBuffer(ATTRCAT_BLOCK);
 
   HeadInfo relCatHeader;
-  HeadInfo attrCatHeader;
 
-  // load the headers of both the blocks into relCatHeader and attrCatHeader.
+  // load the header into relCatHeader
   // (we will implement these functions later)
   relCatBuffer.getHeader(&relCatHeader);
-  attrCatBuffer.getHeader(&attrCatHeader);
 
   for (int i = 0; i < relCatHeader.numEntries; i++) {
 
@@ -28,17 +25,31 @@ int main(int argc, char *argv[]) {
 
     printf("Relation: %s\n", relCatRecord[RELCAT_REL_NAME_INDEX].sVal);
 
-    for (int j = 0; j < attrCatHeader.numEntries; j++) {
+    int attrCatBlockNum = ATTRCAT_BLOCK;
+    
+    while(attrCatBlockNum != -1){
+      
+      // object for attribute catalog
+      RecBuffer attrCatBuffer(attrCatBlockNum);
+      
+      HeadInfo attrCatHeader;
+      attrCatBuffer.getHeader(&attrCatHeader);
+    
+      for (int j = 0; j < attrCatHeader.numEntries; j++) {
 
-      // declare attrCatRecord and load the attribute catalog entry into it
-      Attribute attrCatRecord[ATTRCAT_NO_ATTRS];
-      attrCatBuffer.getRecord(attrCatRecord, j);
+        // declare attrCatRecord and load the attribute catalog entry into it
+        Attribute attrCatRecord[ATTRCAT_NO_ATTRS];
+        attrCatBuffer.getRecord(attrCatRecord, j);
 
-      if (strcmp(relCatRecord[RELCAT_REL_NAME_INDEX].sVal, attrCatRecord[ATTRCAT_REL_NAME_INDEX].sVal) == 0) {
-        const char *attrType = attrCatRecord[ATTRCAT_ATTR_TYPE_INDEX].nVal == NUMBER ? "NUM" : "STR";
-        printf("  %s: %s\n", attrCatRecord[ATTRCAT_ATTR_NAME_INDEX].sVal, attrType);
+        if (strcmp(relCatRecord[RELCAT_REL_NAME_INDEX].sVal, attrCatRecord[ATTRCAT_REL_NAME_INDEX].sVal) == 0) {
+          const char *attrType = attrCatRecord[ATTRCAT_ATTR_TYPE_INDEX].nVal == NUMBER ? "NUM" : "STR";
+          printf("  %s: %s\n", attrCatRecord[ATTRCAT_ATTR_NAME_INDEX].sVal, attrType);
+        }
       }
+      
+      attrCatBlockNum = attrCatHeader.rblock;
     }
+    
     printf("\n");
   }
 
