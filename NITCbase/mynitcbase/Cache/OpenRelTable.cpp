@@ -146,9 +146,10 @@ OpenRelTable::~OpenRelTable() {
     // free all the memory that you allocated in the constructor
     free(RelCacheTable::relCache[RELCAT_RELID]);
     free(RelCacheTable::relCache[ATTRCAT_RELID]);
+    free(RelCacheTable::relCache[ATTRCAT_RELID+1]);
 
     int m=RelCacheTable::relCache[RELCAT_RELID]->relCatEntry.numAttrs; 
-    for(int i=0;i<=1;i++){
+    for(int i=0;i<=2;i++){
         AttrCacheEntry* head=AttrCacheTable::attrCache[i];
         AttrCacheEntry* temp=nullptr;
         // n stores number of attributes in relational catalog, Which is 6 ofcourse
@@ -158,4 +159,13 @@ OpenRelTable::~OpenRelTable() {
             free(temp);
         } 
     }
+}
+
+int OpenRelTable::getRelId(char relName[ATTR_SIZE]) {
+
+  if(strcmp(relName ,RELCAT_RELNAME)==0) return RELCAT_RELID;
+  if(strcmp(relName ,ATTRCAT_RELNAME)==0) return ATTRCAT_RELID;
+  if(strcmp(relName ,"Students")==0) return ATTRCAT_RELID+1;
+
+  return E_RELNOTOPEN;
 }

@@ -6,25 +6,9 @@
 #include "FrontendInterface/FrontendInterface.h"
 
 int main(int argc, char *argv[]) {
-  /* Initialize the Run Copy of Disk */
   Disk disk_run;
   StaticBuffer buffer;
   OpenRelTable cache;
 
-  // displayRelations();
-
-	for (int relId = 0; relId <=2; relId++) { // relId<=2 for exercise
-		RelCatEntry relCatBuffer;
-		RelCacheTable::getRelCatEntry(relId, &relCatBuffer);
-		printf ("Relation: %s\n", relCatBuffer.relName);
-		for (int attrIndex = 0; attrIndex < relCatBuffer.numAttrs; attrIndex++) {
-			AttrCatEntry attrCatBuffer;
-			AttrCacheTable::getAttrCatEntry(relId, attrIndex, &attrCatBuffer);
-			const char *attrType = attrCatBuffer.attrType == NUMBER ? "NUM" : "STR";
-			printf ("    %s: %s\n", attrCatBuffer.attrName, attrType);
-		}
-		printf("\n");
-	}
-  // return FrontendInterface::handleFrontend(argc, argv);
-  return 0;
+  return FrontendInterface::handleFrontend(argc, argv);
 }
